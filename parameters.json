@@ -1,0 +1,38 @@
+{
+	"roles": {
+		"EU": "976728441103728690",
+		"NA": "976728441103728690",
+		"SA": "976728441103728690"
+	},
+	"channels": {
+		"EU": "873268177939877979",
+		"NA": "873268423445069834",
+		"SA": "873268108389941288",
+		"pickRegion": "976566900605734972"
+	},
+	"findTeam": {
+		"searchCriteria": {
+			"condition": "AND",
+			"keywords": ["alg", "jueg"]
+		},
+		"channelSuggestion": "Puedes buscar equipo en el canal ",
+		"pickRegion": "Selecciona tu región en ",
+		"allChannels": "Luego escribe en "
+	},
+	"autoReplies": {
+		"hi": {
+			"searchCriteria": {
+				"condition": "OR",
+				"keywords": ["hola", "buenas"]
+			},
+			"responses": ["Has vuelto 😮"]
+		},
+		"bye": {
+			"searchCriteria": {
+				"condition": "OR",
+				"keywords": ["chau", "adiós", "adios"]
+			},
+			"responses": ["Hasta luego!", "Ojalá no vuelvas! 😈", "No te vayas 😢"]
+		}
+	}
+}
