@@ -14,6 +14,7 @@ It is based on `discord.js`.
 
 * Nodejs >= 12.0
 * Npm >= 6.0
+* Bot must have enable Privileged Gateway Intents -> Message content intent
 
 ## Installation
 
@@ -39,7 +40,22 @@ It must be renamed to `config.json`
 }
 ```
 
-Modify `parameters.json` to add auto-replies or change search criteria
+Modify `parameters.json`:
+* Add roleManager Role Id
+* Add auto-replies or change search criteria
+
+## Role manager
+
+* On your discord create a role `Role manager` or any other name. Any member with this role can use Role manager commands
+* In discord roles hierarchy `Role manager` should be below `Zaken Bot` role
+* To add or remove roles:
+$role @Member add @Role1 @Role2 @Role3 ...
+$role @Member remove @Role1 @Role2 @Role3 ...
+
+## Security
+
+Any role below `Zaken Bot` role can be assigned or removed from any member.
+Put `Zaken Bot` role only above low risk roles which you want be managed.
 
 ## Run
 
@@ -69,3 +85,43 @@ A: Open up powershell(Admin) then input below command and enter:
 ```powershell
 set-ExecutionPolicy RemoteSigned
 ```
+
+## Role manager test scenarios
+
+1. $role @Member add @Role1
+add Role1 successfuly
+2. $role @Member remove @Role1
+remove Role1 successfuly
+3. $role @Member add @Role1 @Role2
+adds Role1 and Role2 successfuly
+4. $role @Member remove @Role1 @Role2
+removes Role1 and Role2 successfuly
+5. $role
+shows command format
+6. $role wrongWord add @Role1
+shows command format
+7. $role @Member wrongWord @Role1
+shows command format
+8. $role @Member add wrongWord
+shows command format
+9. $role @Member
+shows command format
+10. $role @Member add
+shows command format
+11. $role @Role1 add @Role1
+shows Cannot add role to another role message
+12. $role @Role1 add @Member
+shows command format
+
+Permission scenarios:
+
+* Add a role which bot has not permission
+$role @Member add @HighRankRole
+shows Cannot add role message
+
+* Remove a role which bot has not permission
+$role @Member remove @HighRankRole
+shows Cannot remove role message
+
+* Member use $role without `Role manager` role
+bot ignore message
