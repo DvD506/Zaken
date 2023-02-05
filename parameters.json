@@ -1,8 +1,28 @@
 {
 	"roles": {
-		"EU": "976728441103728690",
-		"NA": "976728441103728690",
-		"SA": "976728441103728690"
+		"roleManager": "980866603698778133",
+		"region": {
+			"EU": "976728441103728690",
+			"NA": "976728441103728690",
+			"SA": "976728441103728690"
+		}
+	},
+	"commands": {
+		"roleManager": {
+			"preffix": "$role",
+			"operations": {
+				"add": "add",
+				"remove": "remove"
+			},
+			"messages": {
+				"formatMessage": "Formato:\n",
+				"addRoleExample": " @Usuario add @Rol1 @Rol2 @Rol3 ...",
+				"removeRoleExample": " @Usuario remove @Rol1 @Rol2 @Rol3 ...",
+				"cannotAddRole": "No tienes permiso para agregar ese rol",
+				"cannotRemoveRole": "No tienes permiso para quitar ese rol",
+				"cannotAddRoleToAnotherRole": "No puedes agregar un rol a otro rol"
+			}
+		}
 	},
 	"channels": {
 		"EU": "873268177939877979",

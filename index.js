@@ -1,15 +1,30 @@
 'use strict';
 
-const { Client, Events, GatewayIntentBits, ActivityType, EmbedBuilder } = require('discord.js');
+const { Client, Events, GatewayIntentBits, EmbedBuilder } = require('discord.js');
+
 const config = require('./config.json');
-const parameters = require('./parameters.json');
-const roles = parameters.roles;
-const channels = parameters.channels;
-const findTeam = parameters.findTeam;
-const autoReplies = parameters.autoReplies;
+
+//Application parameters
+const applicationParameters = require('./parameters.json');
+const roles = applicationParameters.roles;
+const channels = applicationParameters.channels;
+const findTeam = applicationParameters.findTeam;
+const autoReplies = applicationParameters.autoReplies;
+const roleManager = applicationParameters.commands.roleManager;
+
+//Application constants
+
+//Auto-replies
 const AND = 'AND';
 const OR = 'OR';
 const GIF = 'https://media.tenor.com/5c9Owod1dSsAAAAC/infinite-infinito.gif';
+
+//Role manager
+const memberPreffix = '<@';
+const rolePreffix = '<@&';
+const roleIdentifier = '&';
+const commandDelimiter = ' ';
+const missingPermissionsErrorCode = 50013;
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessages]});
 
@@ -22,26 +37,127 @@ client.on("messageCreate", async (message) => {
         if (message.author.bot) 
             return false;
 
-        evaluateFindTeamSuggestion(message);
+        manageRoles(message);
 
-        evaluteAutoReplies(message);
+        //evaluateFindTeamSuggestion(message);
+
+        //evaluteAutoReplies(message);
     } catch (error) {
         console.error(`Error on messageCreate listener`);
         console.error(error);
     }
 });
 
+process.on('unhandledRejection', error => {
+	console.error('Unhandled promise rejection: ', error);
+});
+
+client.on(Events.ShardError, error => {
+	console.error('A websocket connection encountered an error: ', error);
+});
+
 client.login(config.token);
+
+function manageRoles(message) {
+    if (!message.content.startsWith(roleManager.preffix))
+        return;
+
+    if (!message.member.roles.cache.has(roles.roleManager))
+        return;
+
+    try {
+        let command = message.content.substring(roleManager.preffix.length);
+        let parameters = command.split(commandDelimiter);
+
+        if (parameters.length < 4) {
+            message.reply(roleManagerCommandFormat());
+            return;
+        }
+
+        let operation = parameters[2];
+        let memberId = getMemberId(parameters[1]);
+        let member = message.guild.members.cache.get(memberId);
+        let rolesToAssign = getRoles(parameters.slice(3), message.guild.roles.cache);
+
+        assignRoles(operation, rolesToAssign, member, message);
+    } catch (error) {
+        if (error instanceof AssignRoleToRoleException) {
+            message.reply(error.message);
+        } else {
+            message.reply(roleManagerCommandFormat());
+
+            throw error;
+        }
+    }
+}
+
+function assignRoles(operation, rolesToAssign, member, message) {
+    switch (operation) {
+        case roleManager.operations.add:
+            member.roles.add(rolesToAssign).catch(error => {
+                handleMissingPermissions(error, message, roleManager.messages.cannotAddRole)
+            });
+        break;
+        case roleManager.operations.remove:
+            member.roles.remove(rolesToAssign).catch(error => {
+                handleMissingPermissions(error, message, roleManager.messages.cannotRemoveRole);
+            });;
+        break;
+        default:
+            message.reply(roleManagerCommandFormat());
+            return;
+    }
+}
+
+function handleMissingPermissions(error, message, errorMessage) {
+    if(error.code === missingPermissionsErrorCode)
+        message.reply(errorMessage);
+    else
+        throw error;
+}
+
+function roleManagerCommandFormat() {
+    return `${roleManager.messages.formatMessage}${roleManager.preffix} ${roleManager.messages.addRoleExample}\n${roleManager.preffix} ${roleManager.messages.removeRoleExample}`
+}
+
+function getRoles(roleMentions, roleCache) {
+    let roles = [];
+
+    roleMentions.forEach(roleMention => {
+        if (!roleMention.includes(rolePreffix))
+            throw new Error('Parameter is not a role');
+
+        let roleId = getMentionId(roleMention, rolePreffix);
+        let role = roleCache.get(roleId);
+        roles.push(role);
+    });
+    
+    return roles;
+}
+
+function getMemberId(memberMention) {
+    if (memberMention.includes(roleIdentifier))
+        throw new AssignRoleToRoleException(roleManager.messages.cannotAddRoleToAnotherRole);
+
+    if (!memberMention.includes(memberPreffix))
+        throw new Error('First Parameter is not a member');
+
+    return getMentionId(memberMention, memberPreffix)
+}
+
+function getMentionId(mention, preffix) {
+    return mention.substring(mention.indexOf(preffix) + preffix.length, mention.length - 1);
+}
 
 function evaluateFindTeamSuggestion(message) {
     if (containKeywords(message.content, findTeam.searchCriteria)) {
         let memberRoles = message.member.roles.cache;
         
-        if (memberRoles.has(roles.EU)) {
+        if (memberRoles.has(roles.region.EU)) {
             message.reply(`${findTeam.channelSuggestion} <#${channels.EU}>`);
-        } else if (memberRoles.has(roles.NA)) {
+        } else if (memberRoles.has(roles.region.NA)) {
             message.reply(`${findTeam.channelSuggestion} <#${channels.NA}>`);
-        } else if (memberRoles.has(roles.SA)) {
+        } else if (memberRoles.has(roles.region.SA)) {
             message.reply(`${findTeam.channelSuggestion} <#${channels.SA}>`);
         } else {
             message.reply(`${findTeam.pickRegion} <#${channels.pickRegion}>. ${findTeam.allChannels} <#${channels.EU}>, <#${channels.NA}> o <#${channels.SA}>`);
@@ -86,3 +202,9 @@ function resolveResponse(responses) {
     
     return responses[Math.floor(Math.random() * responses.length)];
 }
+
+function AssignRoleToRoleException(msg) {
+    this.message = msg;
+}
+  
+AssignRoleToRoleException.prototype = Object.create(Error.prototype);
