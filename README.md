@@ -88,29 +88,29 @@ set-ExecutionPolicy RemoteSigned
 
 ## Role manager test scenarios
 
-1. $role @Member add @Role1
+1. $role @Member add @Role1 ->
 add Role1 successfuly
-2. $role @Member remove @Role1
+2. $role @Member remove @Role1 ->
 remove Role1 successfuly
-3. $role @Member add @Role1 @Role2
+3. $role @Member add @Role1 @Role2 ->
 adds Role1 and Role2 successfuly
-4. $role @Member remove @Role1 @Role2
+4. $role @Member remove @Role1 @Role2 ->
 removes Role1 and Role2 successfuly
-5. $role
+5. $role  ->
 shows command format
-6. $role wrongWord add @Role1
+6. $role wrongWord add @Role1  ->
 shows command format
-7. $role @Member wrongWord @Role1
+7. $role @Member wrongWord @Role1 ->
 shows command format
-8. $role @Member add wrongWord
+8. $role @Member add wrongWord ->
 shows command format
-9. $role @Member
+9. $role @Member ->
 shows command format
-10. $role @Member add
+10. $role @Member add ->
 shows command format
-11. $role @Role1 add @Role1
+11. $role @Role1 add @Role1 ->
 shows Cannot add role to another role message
-12. $role @Role1 add @Member
+12. $role @Role1 add @Member ->
 shows command format
 
 Permission scenarios:

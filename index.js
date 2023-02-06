@@ -34,6 +34,8 @@ client.once(Events.ClientReady, c => {
 
 client.on("messageCreate", async (message) => {
     try {
+        console.log(`Incoming message: content ${message.content}`);
+
         if (message.author.bot) 
             return false;
 
@@ -62,8 +64,12 @@ function manageRoles(message) {
     if (!message.content.startsWith(roleManager.preffix))
         return;
 
+    console.log(`Role manager command found`);
+
     if (!message.member.roles.cache.has(roles.roleManager))
         return;
+
+    console.log(`User is authorized to use role manager`);
 
     try {
         let command = message.content.substring(roleManager.preffix.length);
