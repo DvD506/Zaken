@@ -34,8 +34,6 @@ client.once(Events.ClientReady, c => {
 
 client.on("messageCreate", async (message) => {
     try {
-        console.log(`Incoming message: content ${message.content}`);
-
         if (message.author.bot) 
             return false;
 
@@ -103,11 +101,13 @@ function assignRoles(operation, rolesToAssign, member, message) {
             member.roles.add(rolesToAssign).catch(error => {
                 handleMissingPermissions(error, message, roleManager.messages.cannotAddRole)
             });
+            message.reply('Roles asignado correctamente!');
         break;
         case roleManager.operations.remove:
             member.roles.remove(rolesToAssign).catch(error => {
                 handleMissingPermissions(error, message, roleManager.messages.cannotRemoveRole);
             });;
+            message.reply('Roles quitados correctamente!');
         break;
         default:
             message.reply(roleManagerCommandFormat());
