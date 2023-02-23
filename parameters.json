@@ -1,6 +1,6 @@
 {
 	"roles": {
-		"roleManager": "980866603698778133",
+		"roleManager": "1071922462335455352",
 		"region": {
 			"EU": "976728441103728690",
 			"NA": "976728441103728690",
@@ -14,13 +14,20 @@
 				"add": "add",
 				"remove": "remove"
 			},
+			"manageableRoles": [
+				"1071922663058063470",
+				"1071922671933198506"
+			],
 			"messages": {
 				"formatMessage": "Formato:\n",
 				"addRoleExample": " @Usuario add @Rol1 @Rol2 @Rol3 ...",
 				"removeRoleExample": " @Usuario remove @Rol1 @Rol2 @Rol3 ...",
-				"cannotAddRole": "No tienes permiso para agregar ese rol",
-				"cannotRemoveRole": "No tienes permiso para quitar ese rol",
-				"cannotAddRoleToAnotherRole": "No puedes agregar un rol a otro rol"
+				"cannotAddRole": "No tienes permiso para agregar este rol",
+				"cannotRemoveRole": "No tienes permiso para quitar este rol",
+				"cannotOperateRole": "No tienes permiso para operar este rol",
+				"cannotAddRoleToAnotherRole": "No puedes agregar un rol a otro rol",
+				"rolesAddedSuccesfully": "Roles asignados correctamente!",
+				"rolesRemovedSuccesfully": "Roles quitados correctamente!"
 			}
 		}
 	},

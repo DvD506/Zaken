@@ -85,7 +85,7 @@ function manageRoles(message) {
 
         assignRoles(operation, rolesToAssign, member, message);
     } catch (error) {
-        if (error instanceof AssignRoleToRoleException) {
+        if (error instanceof RoleException) {
             message.reply(error.message);
         } else {
             message.reply(roleManagerCommandFormat());
@@ -101,13 +101,13 @@ function assignRoles(operation, rolesToAssign, member, message) {
             member.roles.add(rolesToAssign).catch(error => {
                 handleMissingPermissions(error, message, roleManager.messages.cannotAddRole)
             });
-            message.reply('Roles asignado correctamente!');
+            message.reply(roleManager.messages.rolesAddedSuccesfully);
         break;
         case roleManager.operations.remove:
             member.roles.remove(rolesToAssign).catch(error => {
                 handleMissingPermissions(error, message, roleManager.messages.cannotRemoveRole);
             });;
-            message.reply('Roles quitados correctamente!');
+            message.reply(roleManager.messages.rolesRemovedSuccesfully);
         break;
         default:
             message.reply(roleManagerCommandFormat());
@@ -134,6 +134,10 @@ function getRoles(roleMentions, roleCache) {
             throw new Error('Parameter is not a role');
 
         let roleId = getMentionId(roleMention, rolePreffix);
+
+        if (!roleManager.manageableRoles.includes(roleId))
+            throw new RoleException(roleManager.messages.cannotOperateRole);
+
         let role = roleCache.get(roleId);
         roles.push(role);
     });
@@ -143,7 +147,7 @@ function getRoles(roleMentions, roleCache) {
 
 function getMemberId(memberMention) {
     if (memberMention.includes(roleIdentifier))
-        throw new AssignRoleToRoleException(roleManager.messages.cannotAddRoleToAnotherRole);
+        throw new RoleException(roleManager.messages.cannotAddRoleToAnotherRole);
 
     if (!memberMention.includes(memberPreffix))
         throw new Error('First Parameter is not a member');
@@ -209,8 +213,8 @@ function resolveResponse(responses) {
     return responses[Math.floor(Math.random() * responses.length)];
 }
 
-function AssignRoleToRoleException(msg) {
+function RoleException(msg) {
     this.message = msg;
 }
   
-AssignRoleToRoleException.prototype = Object.create(Error.prototype);
+RoleException.prototype = Object.create(Error.prototype);
