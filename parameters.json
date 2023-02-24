@@ -22,6 +22,7 @@
 				"formatMessage": "Formato:\n",
 				"addRoleExample": " @Usuario add @Rol1 @Rol2 @Rol3 ...",
 				"removeRoleExample": " @Usuario remove @Rol1 @Rol2 @Rol3 ...",
+				"notRoleManager": "No eres administrador de roles",
 				"cannotAddRole": "No tienes permiso para agregar este rol",
 				"cannotRemoveRole": "No tienes permiso para quitar este rol",
 				"cannotOperateRole": "No tienes permiso para operar este rol",

@@ -64,8 +64,10 @@ function manageRoles(message) {
 
     console.log(`Role manager command found`);
 
-    if (!message.member.roles.cache.has(roles.roleManager))
+    if (!message.member.roles.cache.has(roles.roleManager)) {
+        message.reply(roleManager.messages.notRoleManager);
         return;
+    }
 
     console.log(`User is authorized to use role manager`);
 
